@@ -8,7 +8,9 @@
 
 
 ### Diagrams
+![Database Diagram](https://imgur.com/a/V7xX7vg)
 
+![Class Diagram](https://imgur.com/a/vq0ZlV9)
 
 ### Getting Started
 
