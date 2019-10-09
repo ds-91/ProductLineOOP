@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -36,6 +37,8 @@ public class Controller {
   @FXML private ChoiceBox choiceItemType;
   @FXML private ComboBox comboItemQuantity;
 
+  private ArrayList<Product> productLine = new ArrayList<>();
+
   /** Initializes any GUI fields or parameters when the GUI is launched. */
   public void initialize() {
     ObservableList<Integer> quantityOptions =
@@ -56,21 +59,23 @@ public class Controller {
    */
   public void actionAddButton(ActionEvent actionEvent) {
     if (txtProductName.getLength() > 0 && txtManufacturer.getLength() > 0) {
-      String productName = txtProductName.getText();
-      String manufacturerName = txtManufacturer.getText();
-      // Temporary item type before Sprint 2
-      String type = "Temp";
-
+      Widget newProduct =
+          new Widget(
+              choiceItemType.getSelectionModel().getSelectedItem().toString(),
+              txtManufacturer.getText(),
+              txtProductName.getText());
       try {
         Class.forName(jdbcDriver);
         conn = DriverManager.getConnection(dbUrl, user, pass);
         PreparedStatement stmt =
             conn.prepareStatement("INSERT INTO Product(type, manufacturer, name) VALUES(?, ?, ?)");
-        stmt.setString(1, type);
-        stmt.setString(2, manufacturerName);
-        stmt.setString(3, productName);
+        stmt.setString(1, newProduct.getType());
+        stmt.setString(2, newProduct.getManufacturer());
+        stmt.setString(3, newProduct.getName());
 
         stmt.execute();
+
+        productLine.add(newProduct);
 
         // Closes the prepared statement and connection (FindBugs)
         stmt.close();
