@@ -20,22 +20,22 @@ public class AudioPlayer extends Product implements MultimediaControl {
 
   @Override
   public void play() {
-    System.out.println("Playing...");
+    System.out.println("Playing");
   }
 
   @Override
   public void stop() {
-    System.out.println("Stopping...");
+    System.out.println("Stopping");
   }
 
   @Override
   public void previous() {
-    System.out.println("Previous song...");
+    System.out.println("Previous");
   }
 
   @Override
   public void next() {
-    System.out.println("Next song...");
+    System.out.println("Next");
   }
 
   @Override
