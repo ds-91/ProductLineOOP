@@ -9,10 +9,15 @@ public class ProductionRecord {
   private String serialNumber;
   private Date dateProduced;
 
+  public ProductionRecord(Product p, int count) {
+    super();
+    this.serialNumber = p.getManufacturer().substring(0, 3) + p.getName().substring(0, 2) + String.format("%05d" , count);
+    this.dateProduced = new Date();
+  }
+
   public ProductionRecord(int productId) {
+    super();
     this.productId = productId;
-    this.productionNumber = 0;
-    this.serialNumber = "0";
     this.dateProduced = new Date();
   }
 

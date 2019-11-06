@@ -17,6 +17,12 @@ public abstract class Product implements Item {
 
   }
 
+  public Product(String type, String manufacturer, ItemType name) {
+    this.type = type;
+    this.manufacturer = manufacturer;
+    this.name = String.valueOf(name);
+  }
+
   @Override
   public int getId() {
     return this.id;

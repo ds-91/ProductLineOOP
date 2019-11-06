@@ -11,4 +11,13 @@ public enum ItemType {
   ItemType(String code) {
     this.code = code;
   }
+
+  public String getCode() {
+    return this.code;
+  }
+
+  @Override
+  public String toString() {
+    return this.code;
+  }
 }

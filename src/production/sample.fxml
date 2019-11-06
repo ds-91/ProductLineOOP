@@ -56,12 +56,11 @@
                         </GridPane>
                         <Button fx:id="btnAddProduct" layoutX="184.0" layoutY="256.0" mnemonicParsing="false" onAction="#actionAddButton" text="Add Product" />
                         <Label layoutX="285.0" layoutY="14.0" text="Existing Products" />
-                        <TableView layoutX="285.0" layoutY="31.0" prefHeight="253.0" prefWidth="200.0">
-                          <columns>
-                            <TableColumn prefWidth="75.0" text="C1" />
-                            <TableColumn prefWidth="75.0" text="C2" />
-                          </columns>
-                        </TableView>
+                        <TableView fx:id="tableExistingProducts" layoutX="285.0" layoutY="31.0" prefHeight="253.0" prefWidth="200.0">
+                           <columns>
+                              <TableColumn fx:id="productNameColumn" prefWidth="115.0" text="Product Name" />
+                              <TableColumn fx:id="productTypeColumn" prefWidth="75.0" text="Type" />
+                           </columns></TableView>
                      </children></AnchorPane>
             </content>
           </Tab>
@@ -70,7 +69,7 @@
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
                         <Label layoutX="14.0" layoutY="14.0" text="Choose Product" />
-                        <ListView layoutX="12.0" layoutY="31.0" prefHeight="221.0" prefWidth="475.0" />
+                        <ListView fx:id="listAllProducts" layoutX="12.0" layoutY="31.0" prefHeight="221.0" prefWidth="475.0" />
                         <Label layoutX="12.0" layoutY="269.0" text="Choose Quantity" />
                         <ComboBox fx:id="comboItemQuantity" layoutX="136.0" layoutY="264.0" prefWidth="150.0" />
                         <Button fx:id="btnRecordProduction" layoutX="352.0" layoutY="264.0" mnemonicParsing="false" onAction="#actionRecordProduction" text="Record Production" />

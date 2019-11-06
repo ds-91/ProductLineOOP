@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import javafx.collections.FXCollections;
@@ -15,8 +14,12 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 
 /**
  * Controller class that handles the logic for the GUI to Database relationship.
@@ -32,16 +35,17 @@ public class Controller {
   private static final String user = "";
   private static final String pass = "";
 
-  private Connection conn = null;
-
   @FXML private TextField txtProductName;
   @FXML private TextField txtManufacturer;
   @FXML private ChoiceBox choiceItemType;
   @FXML private ComboBox comboItemQuantity;
   @FXML private TextArea txtProductionLog;
+  @FXML private TableView tableExistingProducts;
+  @FXML private ListView listAllProducts;
+  @FXML private TableColumn productNameColumn;
+  @FXML private TableColumn productTypeColumn;
 
-  private ArrayList<Product> productLine = new ArrayList<>();
-  private ObservableList<ItemType> itemTypeList = FXCollections.observableArrayList();
+  private ObservableList<Product> productLine;
 
   /** Initializes any GUI fields or parameters when the GUI is launched. */
   public void initialize() {
@@ -51,16 +55,22 @@ public class Controller {
     comboItemQuantity.setEditable(true);
     comboItemQuantity.getSelectionModel().selectFirst();
 
+    ObservableList<ItemType> itemTypeList = FXCollections.observableArrayList();
+
     for (ItemType itemType : ItemType.values()) {
-      itemTypeList.add(itemType);
+      //itemTypeList.add(itemType);
+      itemTypeList.addAll(itemType);
     }
     choiceItemType.setItems(itemTypeList);
 
-    // Issue 4 "Display the production record in the text area" - Not sure what is meant
-    ProductionRecord pr = new ProductionRecord(0, 1, "1234", new Date());
+
+    /** Issue 4 "Display the production record in the text area" - Not sure what is meant */
+    ProductionRecord pr = new ProductionRecord(0, 1, "00000", new Date());
     txtProductionLog.appendText(pr.toString() + "\n");
 
     testMultimedia();
+    setupProductLineTable();
+    setupProductListView();
   }
 
   /**
@@ -81,7 +91,7 @@ public class Controller {
               txtProductName.getText());
       try {
         Class.forName(jdbcDriver);
-        conn = DriverManager.getConnection(dbUrl, user, pass);
+        Connection conn = DriverManager.getConnection(dbUrl, user, pass);
         PreparedStatement stmt =
             conn.prepareStatement("INSERT INTO Product(type, manufacturer, name) VALUES(?, ?, ?)");
         stmt.setString(1, newProduct.getType());
@@ -91,13 +101,12 @@ public class Controller {
         stmt.execute();
 
         productLine.add(newProduct);
+        setupProductListView();
 
         // Closes the prepared statement and connection (FindBugs)
         stmt.close();
         conn.close();
-      } catch (ClassNotFoundException e) {
-        e.printStackTrace();
-      } catch (SQLException e) {
+      } catch (ClassNotFoundException | SQLException e) {
         e.printStackTrace();
       }
     } else {
@@ -116,13 +125,13 @@ public class Controller {
     System.out.println("record production pressed");
   }
 
-  public static void testMultimedia() {
+  private static void testMultimedia() {
     AudioPlayer newAudioProduct = new AudioPlayer("DP-X1A", "Onkyo",
         "DSD/FLAC/ALAC/WAV/AIFF/MQA/Ogg-Vorbis/MP3/AAC", "M3U/PLS/WPL");
     Screen newScreen = new Screen("720x480", 40, 22);
     MoviePlayer newMovieProduct = new MoviePlayer("DBPOWER MK101", "OracleProduction", newScreen,
         MonitorType.LCD);
-    ArrayList<MultimediaControl> productList = new ArrayList<MultimediaControl>();
+    ArrayList<MultimediaControl> productList = new ArrayList();
     productList.add(newAudioProduct);
     productList.add(newMovieProduct);
     for (MultimediaControl p : productList) {
@@ -132,5 +141,19 @@ public class Controller {
       p.next();
       p.previous();
     }
+  }
+
+  private void setupProductLineTable() {
+
+    productLine = FXCollections.observableArrayList();
+
+    productNameColumn.setCellValueFactory(new PropertyValueFactory("name"));
+    productTypeColumn.setCellValueFactory(new PropertyValueFactory("type"));
+
+    tableExistingProducts.setItems(productLine);
+  }
+
+  private void setupProductListView() {
+    listAllProducts.setItems(productLine);
   }
 }
