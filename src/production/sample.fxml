@@ -58,8 +58,8 @@
                         <Label layoutX="285.0" layoutY="14.0" text="Existing Products" />
                         <TableView fx:id="tableExistingProducts" layoutX="285.0" layoutY="31.0" prefHeight="253.0" prefWidth="200.0">
                            <columns>
-                              <TableColumn fx:id="productNameColumn" prefWidth="115.0" text="Product Name" />
-                              <TableColumn fx:id="productTypeColumn" prefWidth="75.0" text="Type" />
+                              <TableColumn fx:id="productNameColumn" prefWidth="99.0" text="Product Name" />
+                              <TableColumn fx:id="productTypeColumn" prefWidth="100.0" text="Type" />
                            </columns></TableView>
                      </children></AnchorPane>
             </content>

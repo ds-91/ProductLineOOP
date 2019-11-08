@@ -1,5 +1,6 @@
 package production;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 public class ProductionRecord {
@@ -7,21 +8,21 @@ public class ProductionRecord {
   private int productionNumber;
   private int productId;
   private String serialNumber;
-  private Date dateProduced;
+  private Timestamp dateProduced;
 
   public ProductionRecord(Product p, int count) {
     super();
     this.serialNumber = p.getManufacturer().substring(0, 3) + p.getName().substring(0, 2) + String.format("%05d" , count);
-    this.dateProduced = new Date();
+    this.dateProduced = new Timestamp(new Date().getTime());
   }
 
   public ProductionRecord(int productId) {
     super();
     this.productId = productId;
-    this.dateProduced = new Date();
+    this.dateProduced = new Timestamp(new Date().getTime());
   }
 
-  public ProductionRecord(int productionNumber, int productId, String serialNumber, Date dateProduced) {
+  public ProductionRecord(int productionNumber, int productId, String serialNumber, Timestamp dateProduced) {
     this.productionNumber = productionNumber;
     this.productId = productId;
     this.serialNumber = serialNumber;
@@ -52,11 +53,11 @@ public class ProductionRecord {
     this.serialNumber = serialNumber;
   }
 
-  public Date getProdDate() {
+  public Timestamp getProdDate() {
     return dateProduced;
   }
 
-  public void setProdDate(Date dateProduced) {
+  public void setProdDate(Timestamp dateProduced) {
     this.dateProduced = dateProduced;
   }
 

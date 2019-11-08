@@ -3,9 +3,12 @@ package production;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.EnumSet;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -45,7 +48,8 @@ public class Controller {
   @FXML private TableColumn productNameColumn;
   @FXML private TableColumn productTypeColumn;
 
-  private ObservableList<Product> productLine;
+  private ObservableList<Product> productLine = FXCollections.observableArrayList();
+  private ArrayList<ProductionRecord> productionLog = new ArrayList();
 
   /** Initializes any GUI fields or parameters when the GUI is launched. */
   public void initialize() {
@@ -58,18 +62,15 @@ public class Controller {
     ObservableList<ItemType> itemTypeList = FXCollections.observableArrayList();
 
     for (ItemType itemType : ItemType.values()) {
-      //itemTypeList.add(itemType);
-      itemTypeList.addAll(itemType);
+      itemTypeList.add(itemType);
     }
+
     choiceItemType.setItems(itemTypeList);
 
-
-    /** Issue 4 "Display the production record in the text area" - Not sure what is meant */
-    ProductionRecord pr = new ProductionRecord(0, 1, "00000", new Date());
-    txtProductionLog.appendText(pr.toString() + "\n");
-
-    testMultimedia();
     setupProductLineTable();
+    loadProductList();
+    loadProductionLog();
+
     setupProductListView();
   }
 
@@ -101,7 +102,6 @@ public class Controller {
         stmt.execute();
 
         productLine.add(newProduct);
-        setupProductListView();
 
         // Closes the prepared statement and connection (FindBugs)
         stmt.close();
@@ -114,6 +114,8 @@ public class Controller {
       alert.setContentText("Product name and Manufacturer must be filled in!");
       alert.show();
     }
+    setupProductListView();
+    loadProductList();
   }
 
   /**
@@ -122,30 +124,49 @@ public class Controller {
    * @param actionEvent The action of when the button is clicked.
    */
   public void actionRecordProduction(ActionEvent actionEvent) {
-    System.out.println("record production pressed");
+    String selectedItem = listAllProducts.getSelectionModel().getSelectedItem().toString();
+    String quantity = comboItemQuantity.getSelectionModel().getSelectedItem().toString();
+    String[] itemLines = selectedItem.split("\\r?\\n");
+
+    String selectedItemName = itemLines[0].substring(itemLines[0].indexOf(" ") + 1);
+    String selectedItemManufacturer = itemLines[1].substring(itemLines[1].indexOf(" ") + 1);
+    String selectedItemType = itemLines[2].substring(itemLines[2].indexOf(" ") + 1);
+
+    Product p = new Widget(selectedItemType, selectedItemManufacturer, selectedItemName);
+    //ProductionRecord pr = new ProductionRecord(p, Integer.valueOf(quantity));
+    ProductionRecord pr = new ProductionRecord(p, 0);
+
+    ArrayList<ProductionRecord> productionRun = new ArrayList();
+    productionRun.add(pr);
+    addToProductionDB(productionRun);
+
+    loadProductionLog();
+    showProduction();
   }
 
-  private static void testMultimedia() {
-    AudioPlayer newAudioProduct = new AudioPlayer("DP-X1A", "Onkyo",
-        "DSD/FLAC/ALAC/WAV/AIFF/MQA/Ogg-Vorbis/MP3/AAC", "M3U/PLS/WPL");
-    Screen newScreen = new Screen("720x480", 40, 22);
-    MoviePlayer newMovieProduct = new MoviePlayer("DBPOWER MK101", "OracleProduction", newScreen,
-        MonitorType.LCD);
-    ArrayList<MultimediaControl> productList = new ArrayList();
-    productList.add(newAudioProduct);
-    productList.add(newMovieProduct);
-    for (MultimediaControl p : productList) {
-      System.out.println(p);
-      p.play();
-      p.stop();
-      p.next();
-      p.previous();
+  public void addToProductionDB(ArrayList<ProductionRecord> productionRun) {
+    for (ProductionRecord pr : productionRun) {
+      try {
+        Class.forName(jdbcDriver);
+        Connection conn = DriverManager.getConnection(dbUrl, user, pass);
+        PreparedStatement stmt =
+            conn.prepareStatement("INSERT INTO ProductionRecord(PRODUCT_ID, SERIAL_NUM, DATE_PRODUCED) VALUES(?, ?, ?)");
+        stmt.setInt(1, pr.getProductID());
+        stmt.setString(2, pr.getSerialNum());
+        stmt.setTimestamp(3, pr.getProdDate());
+
+        stmt.execute();
+
+        // Closes the prepared statement and connection (FindBugs)
+        stmt.close();
+        conn.close();
+      } catch (ClassNotFoundException | SQLException e) {
+        e.printStackTrace();
+      }
     }
   }
 
   private void setupProductLineTable() {
-
-    productLine = FXCollections.observableArrayList();
 
     productNameColumn.setCellValueFactory(new PropertyValueFactory("name"));
     productTypeColumn.setCellValueFactory(new PropertyValueFactory("type"));
@@ -155,5 +176,69 @@ public class Controller {
 
   private void setupProductListView() {
     listAllProducts.setItems(productLine);
+  }
+
+  private void loadProductList() {
+    try {
+      Class.forName(jdbcDriver);
+      Connection conn = DriverManager.getConnection(dbUrl, user, pass);
+      PreparedStatement stmt =
+          conn.prepareStatement("SELECT * FROM PRODUCT");
+
+      ResultSet rs = stmt.executeQuery();
+
+      Product databaseProduct;
+
+      while (rs.next()) {
+        String productName = rs.getString(2);
+        String productType = rs.getString(3);
+        String productManufacturer = rs.getString(4);
+
+        databaseProduct = new Widget(productType, productManufacturer, productName);
+        productLine.add(databaseProduct);
+      }
+
+      // Closes the prepared statement and connection (FindBugs)
+      stmt.close();
+      conn.close();
+
+    } catch (ClassNotFoundException | SQLException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void loadProductionLog() {
+    if (productionLog.size() > 0) {
+      productionLog.clear();
+    }
+    try {
+      Class.forName(jdbcDriver);
+      Connection conn = DriverManager.getConnection(dbUrl, user, pass);
+      PreparedStatement stmt =
+          conn.prepareStatement("SELECT * FROM PRODUCTIONRECORD");
+
+      ResultSet rs = stmt.executeQuery();
+
+      while (rs.next()) {
+        productionLog.add(new ProductionRecord(rs.getInt(1), rs.getInt(2),
+            rs.getString(3), rs.getTimestamp(4)));
+      }
+
+      // Closes the prepared statement and connection (FindBugs)
+      stmt.close();
+      conn.close();
+    } catch (ClassNotFoundException | SQLException e) {
+      e.printStackTrace();
+    }
+    showProduction();
+  }
+
+  public void showProduction() {
+    txtProductionLog.clear();
+    for (ProductionRecord pr : productionLog) {
+      txtProductionLog.appendText("Prod. Num: " + pr.getProductionNum() + " Product ID: " +
+          pr.getProductID() + " Serial Num: " + pr.getSerialNum() + " Date: " + pr.getProdDate()
+          + "\n");
+    }
   }
 }
