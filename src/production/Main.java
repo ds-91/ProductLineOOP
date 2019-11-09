@@ -14,8 +14,10 @@ import javafx.stage.Stage;
 public class Main extends Application {
 
   /**
+   * Called when the application is started. Starts the display of the user interface.
+   *
    * @param primaryStage The primary stage of the JavaFX GUI that will be shown.
-   * @throws Exception
+   * @throws Exception Exception when the FXMLLoader cannot load the current class.
    */
   @Override
   public void start(Stage primaryStage) throws Exception {
@@ -26,7 +28,11 @@ public class Main extends Application {
     primaryStage.show();
   }
 
-  /** @param args Program arguments that can be passed in on startup. */
+  /**
+   * Called when the application is first ran. Launches the start method to display the UI.
+   *
+   * @param args Program arguments that can be passed in on startup.
+   */
   public static void main(String[] args) {
     launch(args);
   }

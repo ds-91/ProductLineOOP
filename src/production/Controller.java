@@ -125,8 +125,13 @@ public class Controller {
    * @param actionEvent The action of when the button is clicked.
    */
   public void actionRecordProduction(ActionEvent actionEvent) {
+    /*
+     * Collects the data from the GUI ListView of all products able to be produced. Takes each line
+     * and parses it to create a new ProductionRecord object and add it to the production log.
+     */
     String selectedItem = listAllProducts.getSelectionModel().getSelectedItem().toString();
-    int quantity = Integer.parseInt(comboItemQuantity.getSelectionModel().getSelectedItem().toString());
+    int quantity =
+        Integer.parseInt(comboItemQuantity.getSelectionModel().getSelectedItem().toString());
     String[] itemLines = selectedItem.split("\\r?\\n");
 
     String selectedItemName = itemLines[0].substring(itemLines[0].indexOf(" ") + 1);
@@ -146,6 +151,12 @@ public class Controller {
     showProduction();
   }
 
+  /**
+   * Takes an ArrayList of specified type and loops through it and adds it as a row in the database.
+   *
+   * @param productionRun ArrayList of type ProductionRecord that is declared at class level used
+   *     for storing ProductionRecord objects which will then be added to the database.
+   */
   public void addToProductionDB(ArrayList<ProductionRecord> productionRun) {
     for (ProductionRecord pr : productionRun) {
       try {
@@ -154,7 +165,8 @@ public class Controller {
         Connection conn = DriverManager.getConnection(dbUrl, user, pass);
         PreparedStatement stmt =
             conn.prepareStatement(
-                "INSERT INTO ProductionRecord(PRODUCT_ID, SERIAL_NUM, DATE_PRODUCED) VALUES(?, ?, ?)");
+                "INSERT INTO ProductionRecord(PRODUCT_ID, SERIAL_NUM, DATE_PRODUCED) "
+                    + "VALUES(?, ?, ?)");
         stmt.setInt(1, pr.getProductID());
         stmt.setString(2, pr.getSerialNum());
         stmt.setTimestamp(3, pr.getProdDate());
@@ -170,18 +182,29 @@ public class Controller {
     }
   }
 
+  /**
+   * Method called during initialization. It registers two columns in the existing products ListView
+   * displayed in the GUI and sets its contents to the class level ArrayList productLine.
+   */
   private void setupProductLineTable() {
-
     productNameColumn.setCellValueFactory(new PropertyValueFactory("name"));
     productTypeColumn.setCellValueFactory(new PropertyValueFactory("type"));
 
     tableExistingProducts.setItems(productLine);
   }
 
+  /**
+   * Method called during initialization. This method sets the contents of the record production
+   * ListView.
+   */
   private void setupProductListView() {
     listAllProducts.setItems(productLine);
   }
 
+  /**
+   * Method called during initialization. This method queries the Product database and for each row
+   * it creates a new Product object and adds them to the class level ArrayList productLine.
+   */
   private void loadProductList() {
     try {
       Class.forName(jdbcDriver);
@@ -211,7 +234,15 @@ public class Controller {
     }
   }
 
+  /**
+   * Method called during initialization. This method queries the ProductionRecord table and creates
+   * a new ProductionRecord object and adds it to the productionLog ArrayList.
+   */
   public void loadProductionLog() {
+    /*
+     * Clear the productionLog ArrayList if it contains any elements. This is because this method is
+     * called more than once and results in the ArrayList having all elements duplicated.
+     */
     if (productionLog.size() > 0) {
       productionLog.clear();
     }
@@ -237,6 +268,11 @@ public class Controller {
     showProduction();
   }
 
+  /**
+   * Method called during initialization. This method looks through the productionLog ArrayList and
+   * appends the object fields into the production log TextArea. TextField cleared when the method
+   * is called as to not repeat entries.
+   */
   public void showProduction() {
     txtProductionLog.clear();
     for (ProductionRecord pr : productionLog) {
