@@ -92,6 +92,7 @@ public class Controller {
               txtProductName.getText());
       try {
         Class.forName(jdbcDriver);
+        // Blank username and password for now (FindBugs)
         Connection conn = DriverManager.getConnection(dbUrl, user, pass);
         PreparedStatement stmt =
             conn.prepareStatement("INSERT INTO Product(type, manufacturer, name) VALUES(?, ?, ?)");
@@ -125,7 +126,7 @@ public class Controller {
    */
   public void actionRecordProduction(ActionEvent actionEvent) {
     String selectedItem = listAllProducts.getSelectionModel().getSelectedItem().toString();
-    String quantity = comboItemQuantity.getSelectionModel().getSelectedItem().toString();
+    int quantity = Integer.parseInt(comboItemQuantity.getSelectionModel().getSelectedItem().toString());
     String[] itemLines = selectedItem.split("\\r?\\n");
 
     String selectedItemName = itemLines[0].substring(itemLines[0].indexOf(" ") + 1);
@@ -133,11 +134,12 @@ public class Controller {
     String selectedItemType = itemLines[2].substring(itemLines[2].indexOf(" ") + 1);
 
     Product p = new Widget(selectedItemType, selectedItemManufacturer, selectedItemName);
-    //ProductionRecord pr = new ProductionRecord(p, Integer.valueOf(quantity));
     ProductionRecord pr = new ProductionRecord(p, 0);
 
     ArrayList<ProductionRecord> productionRun = new ArrayList();
-    productionRun.add(pr);
+    for (int i = 0; i < quantity; i++) {
+      productionRun.add(pr);
+    }
     addToProductionDB(productionRun);
 
     loadProductionLog();
@@ -148,9 +150,11 @@ public class Controller {
     for (ProductionRecord pr : productionRun) {
       try {
         Class.forName(jdbcDriver);
+        // Blank username and password for now (FindBugs)
         Connection conn = DriverManager.getConnection(dbUrl, user, pass);
         PreparedStatement stmt =
-            conn.prepareStatement("INSERT INTO ProductionRecord(PRODUCT_ID, SERIAL_NUM, DATE_PRODUCED) VALUES(?, ?, ?)");
+            conn.prepareStatement(
+                "INSERT INTO ProductionRecord(PRODUCT_ID, SERIAL_NUM, DATE_PRODUCED) VALUES(?, ?, ?)");
         stmt.setInt(1, pr.getProductID());
         stmt.setString(2, pr.getSerialNum());
         stmt.setTimestamp(3, pr.getProdDate());
@@ -181,9 +185,9 @@ public class Controller {
   private void loadProductList() {
     try {
       Class.forName(jdbcDriver);
+      // Blank username and password for now (FindBugs)
       Connection conn = DriverManager.getConnection(dbUrl, user, pass);
-      PreparedStatement stmt =
-          conn.prepareStatement("SELECT * FROM PRODUCT");
+      PreparedStatement stmt = conn.prepareStatement("SELECT * FROM PRODUCT");
 
       ResultSet rs = stmt.executeQuery();
 
@@ -213,15 +217,15 @@ public class Controller {
     }
     try {
       Class.forName(jdbcDriver);
+      // Blank username and password for now (FindBugs)
       Connection conn = DriverManager.getConnection(dbUrl, user, pass);
-      PreparedStatement stmt =
-          conn.prepareStatement("SELECT * FROM PRODUCTIONRECORD");
+      PreparedStatement stmt = conn.prepareStatement("SELECT * FROM PRODUCTIONRECORD");
 
       ResultSet rs = stmt.executeQuery();
 
       while (rs.next()) {
-        productionLog.add(new ProductionRecord(rs.getInt(1), rs.getInt(2),
-            rs.getString(3), rs.getTimestamp(4)));
+        productionLog.add(
+            new ProductionRecord(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getTimestamp(4)));
       }
 
       // Closes the prepared statement and connection (FindBugs)
@@ -236,9 +240,16 @@ public class Controller {
   public void showProduction() {
     txtProductionLog.clear();
     for (ProductionRecord pr : productionLog) {
-      txtProductionLog.appendText("Prod. Num: " + pr.getProductionNum() + " Product ID: " +
-          pr.getProductID() + " Serial Num: " + pr.getSerialNum() + " Date: " + pr.getProdDate()
-          + "\n");
+      txtProductionLog.appendText(
+          "Prod. Num: "
+              + pr.getProductionNum()
+              + " Product ID: "
+              + pr.getProductID()
+              + " Serial Num: "
+              + pr.getSerialNum()
+              + " Date: "
+              + pr.getProdDate()
+              + "\n");
     }
   }
 }

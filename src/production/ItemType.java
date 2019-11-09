@@ -1,6 +1,6 @@
 package production;
 
-public enum ItemType {
+enum ItemType {
   AUDIO("AU"),
   VISUAL("VI"),
   AUDIO_MOBILE("AM"),

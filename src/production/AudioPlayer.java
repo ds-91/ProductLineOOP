@@ -5,7 +5,11 @@ public class AudioPlayer extends Product implements MultimediaControl {
   private String supportedAudioFormats;
   private String supportedPlaylistFormats;
 
-  public AudioPlayer(String name, String manufacturer, String supportedAudioFormats, String supportedPlaylistFormats) {
+  public AudioPlayer(
+      String name,
+      String manufacturer,
+      String supportedAudioFormats,
+      String supportedPlaylistFormats) {
     super();
     super.setType("AUDIO");
     super.setName(name);
@@ -40,7 +44,10 @@ public class AudioPlayer extends Product implements MultimediaControl {
 
   @Override
   public String toString() {
-    return super.toString() + "\nSupported Audio Formats: " + this.supportedAudioFormats +
-        "\nSupported Playlist Formats: " + this.supportedPlaylistFormats;
+    return super.toString()
+        + "\nSupported Audio Formats: "
+        + this.supportedAudioFormats
+        + "\nSupported Playlist Formats: "
+        + this.supportedPlaylistFormats;
   }
 }

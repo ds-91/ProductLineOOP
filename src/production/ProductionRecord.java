@@ -12,7 +12,10 @@ public class ProductionRecord {
 
   public ProductionRecord(Product p, int count) {
     super();
-    this.serialNumber = p.getManufacturer().substring(0, 3) + p.getName().substring(0, 2) + String.format("%05d" , count);
+    this.serialNumber =
+        p.getManufacturer().substring(0, 3)
+            + p.getName().substring(0, 2)
+            + String.format("%05d", count);
     this.dateProduced = new Timestamp(new Date().getTime());
   }
 
@@ -22,11 +25,12 @@ public class ProductionRecord {
     this.dateProduced = new Timestamp(new Date().getTime());
   }
 
-  public ProductionRecord(int productionNumber, int productId, String serialNumber, Timestamp dateProduced) {
+  public ProductionRecord(
+      int productionNumber, int productId, String serialNumber, Timestamp dateProduced) {
     this.productionNumber = productionNumber;
     this.productId = productId;
     this.serialNumber = serialNumber;
-    this.dateProduced = dateProduced;
+    this.dateProduced = new Timestamp(dateProduced.getTime());
   }
 
   public int getProductionNum() {
@@ -54,16 +58,22 @@ public class ProductionRecord {
   }
 
   public Timestamp getProdDate() {
-    return dateProduced;
+    return new Timestamp(this.dateProduced.getTime());
   }
 
   public void setProdDate(Timestamp dateProduced) {
-    this.dateProduced = dateProduced;
+    this.dateProduced = new Timestamp(dateProduced.getTime());
   }
 
   @Override
   public String toString() {
-    return "Prod. Num: " + this.productionNumber + " Product ID: " + this.productId + " Serial Num: "
-        + this.serialNumber + " Date: " + this.dateProduced;
+    return "Prod. Num: "
+        + this.productionNumber
+        + " Product ID: "
+        + this.productId
+        + " Serial Num: "
+        + this.serialNumber
+        + " Date: "
+        + this.dateProduced;
   }
 }

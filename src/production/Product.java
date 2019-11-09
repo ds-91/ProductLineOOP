@@ -13,9 +13,7 @@ public abstract class Product implements Item {
     this.name = name;
   }
 
-  public Product() {
-
-  }
+  public Product() {}
 
   @Override
   public int getId() {

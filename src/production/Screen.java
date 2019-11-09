@@ -29,6 +29,12 @@ public class Screen implements ScreenSpec {
 
   @Override
   public String toString() {
-    return "Screen:" + "\nResolution: " + this.resolution + "\nRefresh rate: " + this.refreshrate + "\nResponse time: " + this.responsetime;
+    return "Screen:"
+        + "\nResolution: "
+        + this.resolution
+        + "\nRefresh rate: "
+        + this.refreshrate
+        + "\nResponse time: "
+        + this.responsetime;
   }
 }

@@ -3,8 +3,10 @@ package production;
 public interface MultimediaControl {
 
   void play();
-  void stop();
-  void previous();
-  void next();
 
+  void stop();
+
+  void previous();
+
+  void next();
 }
