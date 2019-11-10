@@ -39,12 +39,12 @@ public class Controller {
   @FXML private TextField txtProductName;
   @FXML private TextField txtManufacturer;
   @FXML private ChoiceBox<ItemType> choiceItemType;
-  @FXML private ComboBox<Integer> comboItemQuantity;
+  @FXML private ComboBox comboItemQuantity;
   @FXML private TextArea txtProductionLog;
   @FXML private TableView<Product> tableExistingProducts;
   @FXML private ListView<Product> listAllProducts;
-  @FXML private TableColumn<Product, String> productNameColumn;
-  @FXML private TableColumn<Product, String> productTypeColumn;
+  @FXML private TableColumn<?, ?> productNameColumn;
+  @FXML private TableColumn<?, ?> productTypeColumn;
   @FXML private Button btnAddProduct;
   @FXML private Button btnRecordProduction;
 
@@ -128,7 +128,8 @@ public class Controller {
      * and parses it to create a new ProductionRecord object and add it to the production log.
      */
     String selectedItem = listAllProducts.getSelectionModel().getSelectedItem().toString();
-    int quantity = comboItemQuantity.getSelectionModel().getSelectedItem();
+    int quantity =
+        Integer.parseInt(comboItemQuantity.getSelectionModel().getSelectedItem().toString());
     String[] itemLines = selectedItem.split("\\r?\\n");
 
     String selectedItemName = itemLines[0].substring(itemLines[0].indexOf(" ") + 1);
@@ -136,7 +137,8 @@ public class Controller {
     String selectedItemType = itemLines[2].substring(itemLines[2].indexOf(" ") + 1);
 
     Product p = new Widget(selectedItemType, selectedItemManufacturer, selectedItemName);
-    ProductionRecord pr = new ProductionRecord(p, 0);
+    p.setId(listAllProducts.getSelectionModel().getSelectedIndex());
+    ProductionRecord pr = new ProductionRecord(p, quantity);
 
     ArrayList<ProductionRecord> productionRun = new ArrayList<>();
     for (int i = 0; i < quantity; i++) {
@@ -203,6 +205,7 @@ public class Controller {
    * it creates a new Product object and adds them to the class level ArrayList productLine.
    */
   private void loadProductList() {
+    productLine.clear();
     try {
       Class.forName(jdbcDriver);
       // Blank username and password for now (FindBugs)
@@ -273,11 +276,12 @@ public class Controller {
   private void showProduction() {
     txtProductionLog.clear();
     for (ProductionRecord pr : productionLog) {
+      String itemName = productLine.get(pr.getProductID()).getName();
       txtProductionLog.appendText(
           "Prod. Num: "
               + pr.getProductionNum()
-              + " Product ID: "
-              + pr.getProductID()
+              + " Product Name: "
+              + itemName
               + " Serial Num: "
               + pr.getSerialNum()
               + " Date: "

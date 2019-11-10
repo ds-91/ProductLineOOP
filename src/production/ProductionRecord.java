@@ -22,7 +22,7 @@ public class ProductionRecord {
    * @param count The number of products of type to produce.
    */
   public ProductionRecord(Product p, int count) {
-    super();
+    this.productId = p.getId();
     this.serialNumber =
         p.getManufacturer().substring(0, 3)
             + p.getName().substring(0, 2)
@@ -36,7 +36,6 @@ public class ProductionRecord {
    * @param productId the Id of the product to be recorded.
    */
   public ProductionRecord(int productId) {
-    super();
     this.productId = productId;
     this.dateProduced = new Timestamp(new Date().getTime());
   }
