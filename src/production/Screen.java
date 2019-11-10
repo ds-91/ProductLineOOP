@@ -7,9 +7,9 @@ package production;
  */
 public class Screen implements ScreenSpec {
 
-  private String resolution;
-  private int refreshrate;
-  private int responsetime;
+  private final String resolution;
+  private final int refreshrate;
+  private final int responsetime;
 
   /**
    * Constructor that sets all instance fields.

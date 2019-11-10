@@ -1,5 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="EntryPointsManager">
+    <entry_points version="2.0">
+      <entry_point TYPE="field" FQNAME="production.MonitorType LCD" />
+      <entry_point TYPE="field" FQNAME="production.MonitorType LED" />
+    </entry_points>
+    <pattern value="production.Controller" method="actionAddButton" />
+    <pattern value="production.Controller" method="actionRecordProduction" />
+    <pattern value="production.AudioPlayer" />
+    <pattern value="production.AudioPlayer" method="AudioPlayer" />
+    <pattern value="production.Controller" />
+    <pattern value="production.ItemType" method="getCode" />
+    <pattern value="production.Item" method="getId" />
+    <pattern value="production.Item" method="getManufacturer" />
+    <pattern value="production.Item" method="getName" />
+    <pattern value="production.ScreenSpec" method="getRefreshRate" />
+    <pattern value="production.ScreenSpec" method="getResolution" />
+    <pattern value="production.ScreenSpec" method="getResponseTime" />
+    <pattern value="production.Item" />
+    <pattern value="production.ItemType" />
+    <pattern value="production.MonitorType" />
+    <pattern value="production.MoviePlayer" />
+    <pattern value="production.MoviePlayer" method="MoviePlayer" />
+    <pattern value="production.MultimediaControl" />
+    <pattern value="production.MultimediaControl" method="next" />
+    <pattern value="production.MultimediaControl" method="play" />
+    <pattern value="production.MultimediaControl" method="previous" />
+    <pattern value="production.Product" />
+    <pattern value="production.ProductionRecord" />
+    <pattern value="production.ProductionRecord" method="ProductionRecord" />
+    <pattern value="production.Screen" />
+    <pattern value="production.Screen" method="Screen" />
+    <pattern value="production.ScreenSpec" />
+    <pattern value="production.Product" method="setId" />
+    <pattern value="production.Item" method="setManufacturer" />
+    <pattern value="production.Item" method="setName" />
+    <pattern value="production.ProductionRecord" method="setProdDate" />
+    <pattern value="production.ProductionRecord" method="setProductID" />
+    <pattern value="production.ProductionRecord" method="setProductionNum" />
+    <pattern value="production.ProductionRecord" method="setSerialNum" />
+    <pattern value="production.MultimediaControl" method="stop" />
+  </component>
   <component name="JavadocGenerationManager">
     <option name="OUTPUT_DIRECTORY" value="$PROJECT_DIR$/.." />
     <option name="OPTION_DOCUMENT_TAG_AUTHOR" value="true" />

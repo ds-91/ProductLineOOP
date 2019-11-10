@@ -5,16 +5,14 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.EnumSet;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
@@ -40,16 +38,18 @@ public class Controller {
 
   @FXML private TextField txtProductName;
   @FXML private TextField txtManufacturer;
-  @FXML private ChoiceBox choiceItemType;
-  @FXML private ComboBox comboItemQuantity;
+  @FXML private ChoiceBox<ItemType> choiceItemType;
+  @FXML private ComboBox<Integer> comboItemQuantity;
   @FXML private TextArea txtProductionLog;
-  @FXML private TableView tableExistingProducts;
-  @FXML private ListView listAllProducts;
-  @FXML private TableColumn productNameColumn;
-  @FXML private TableColumn productTypeColumn;
+  @FXML private TableView<Product> tableExistingProducts;
+  @FXML private ListView<Product> listAllProducts;
+  @FXML private TableColumn<Product, String> productNameColumn;
+  @FXML private TableColumn<Product, String> productTypeColumn;
+  @FXML private Button btnAddProduct;
+  @FXML private Button btnRecordProduction;
 
-  private ObservableList<Product> productLine = FXCollections.observableArrayList();
-  private ArrayList<ProductionRecord> productionLog = new ArrayList();
+  private final ObservableList<Product> productLine = FXCollections.observableArrayList();
+  private final ArrayList<ProductionRecord> productionLog = new ArrayList<>();
 
   /** Initializes any GUI fields or parameters when the GUI is launched. */
   public void initialize() {
@@ -61,9 +61,7 @@ public class Controller {
 
     ObservableList<ItemType> itemTypeList = FXCollections.observableArrayList();
 
-    for (ItemType itemType : ItemType.values()) {
-      itemTypeList.add(itemType);
-    }
+    itemTypeList.addAll(ItemType.values());
 
     choiceItemType.setItems(itemTypeList);
 
@@ -130,8 +128,7 @@ public class Controller {
      * and parses it to create a new ProductionRecord object and add it to the production log.
      */
     String selectedItem = listAllProducts.getSelectionModel().getSelectedItem().toString();
-    int quantity =
-        Integer.parseInt(comboItemQuantity.getSelectionModel().getSelectedItem().toString());
+    int quantity = comboItemQuantity.getSelectionModel().getSelectedItem();
     String[] itemLines = selectedItem.split("\\r?\\n");
 
     String selectedItemName = itemLines[0].substring(itemLines[0].indexOf(" ") + 1);
@@ -141,7 +138,7 @@ public class Controller {
     Product p = new Widget(selectedItemType, selectedItemManufacturer, selectedItemName);
     ProductionRecord pr = new ProductionRecord(p, 0);
 
-    ArrayList<ProductionRecord> productionRun = new ArrayList();
+    ArrayList<ProductionRecord> productionRun = new ArrayList<>();
     for (int i = 0; i < quantity; i++) {
       productionRun.add(pr);
     }
@@ -157,7 +154,7 @@ public class Controller {
    * @param productionRun ArrayList of type ProductionRecord that is declared at class level used
    *     for storing ProductionRecord objects which will then be added to the database.
    */
-  public void addToProductionDB(ArrayList<ProductionRecord> productionRun) {
+  private void addToProductionDB(ArrayList<ProductionRecord> productionRun) {
     for (ProductionRecord pr : productionRun) {
       try {
         Class.forName(jdbcDriver);
@@ -238,7 +235,7 @@ public class Controller {
    * Method called during initialization. This method queries the ProductionRecord table and creates
    * a new ProductionRecord object and adds it to the productionLog ArrayList.
    */
-  public void loadProductionLog() {
+  private void loadProductionLog() {
     /*
      * Clear the productionLog ArrayList if it contains any elements. This is because this method is
      * called more than once and results in the ArrayList having all elements duplicated.
@@ -273,7 +270,7 @@ public class Controller {
    * appends the object fields into the production log TextArea. TextField cleared when the method
    * is called as to not repeat entries.
    */
-  public void showProduction() {
+  private void showProduction() {
     txtProductionLog.clear();
     for (ProductionRecord pr : productionLog) {
       txtProductionLog.appendText(

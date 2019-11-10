@@ -8,8 +8,8 @@ package production;
  */
 public class MoviePlayer extends Product implements MultimediaControl {
 
-  private Screen screen;
-  private MonitorType monitorType;
+  private final Screen screen;
+  private final MonitorType monitorType;
 
   /**
    * Movie Player constructor.

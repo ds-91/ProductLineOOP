@@ -5,7 +5,7 @@ package production;
  *
  * @author Derek Schweizer
  */
-public class Widget extends Product {
+class Widget extends Product {
 
   /**
    * Constructor that calls the superclass {@link production.Product}'s constructor.
