@@ -15,6 +15,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -68,8 +69,18 @@ public class Controller {
     setupProductLineTable();
     loadProductList();
     loadProductionLog();
+    setupListViewPlaceholder();
 
     setupProductListView();
+  }
+
+  /**
+   * Method called in the initialize method that sets the placeholder text of the two ListViews.
+   */
+  public void setupListViewPlaceholder() {
+    tableExistingProducts.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+    listAllProducts.setPlaceholder(new Label("No content"));
+    tableExistingProducts.setPlaceholder(new Label("No content"));
   }
 
   /**
