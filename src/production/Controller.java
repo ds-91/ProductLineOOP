@@ -1,11 +1,15 @@
 package production;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Properties;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -34,8 +38,8 @@ public class Controller {
   private static final String dbUrl = "jdbc:h2:./res/ProductionDB";
 
   // Empty database password for now (FindBugs)
-  private static final String user = "";
-  private static final String pass = "";
+  private String user = null;
+  private String pass = null;
 
   @FXML private TextField txtProductName;
   @FXML private TextField txtManufacturer;
@@ -54,6 +58,9 @@ public class Controller {
 
   /** Initializes any GUI fields or parameters when the GUI is launched. */
   public void initialize() {
+    initializeDBInfo();
+    Employee e = new Employee("First Last", "pass");
+    e.setUsername("First Last");
     ObservableList<Integer> quantityOptions =
         FXCollections.observableArrayList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
     comboItemQuantity.setItems(quantityOptions);
@@ -70,13 +77,22 @@ public class Controller {
     loadProductList();
     loadProductionLog();
     setupListViewPlaceholder();
-
     setupProductListView();
   }
 
-  /**
-   * Method called in the initialize method that sets the placeholder text of the two ListViews.
-   */
+  public void initializeDBInfo() {
+    try {
+      Properties prop = new Properties();
+      prop.load(new FileInputStream("res/properties"));
+      pass = prop.getProperty("password");
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  /** Method called in the initialize method that sets the placeholder text of the two ListViews. */
   public void setupListViewPlaceholder() {
     tableExistingProducts.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     listAllProducts.setPlaceholder(new Label("No content"));

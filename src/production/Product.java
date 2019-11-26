@@ -1,5 +1,7 @@
 package production;
 
+import java.util.Collection;
+
 /**
  * Abstract class that implements {@link production.Item} and represents a Product that can be
  * produced. All items produced are types Product.
@@ -107,6 +109,15 @@ public abstract class Product implements Item {
    */
   public void setType(String type) {
     this.type = type;
+  }
+
+  // Additional Challenges
+  public static <T> void printType(Collection<T> collection) {
+    for (T obj : collection) {
+      if (obj instanceof Product) {
+        System.out.println(((Product) obj).name + " is type: " + obj.getClass());
+      }
+    }
   }
 
   /**
