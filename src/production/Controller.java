@@ -1,7 +1,6 @@
 package production;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -37,19 +36,21 @@ public class Controller {
   private static final String jdbcDriver = "org.h2.Driver";
   private static final String dbUrl = "jdbc:h2:./res/ProductionDB";
 
-  // Empty database password for now (FindBugs)
-  private String user = null;
-  private String pass = null;
+  private final String user = "";
+  private String pass = "";
 
   @FXML private TextField txtProductName;
   @FXML private TextField txtManufacturer;
-  @FXML private ChoiceBox<ItemType> choiceItemType;
-  @FXML private ComboBox comboItemQuantity;
+  @FXML private TextField txtFullName;
+  @FXML private TextField txtPassword;
   @FXML private TextArea txtProductionLog;
-  @FXML private TableView<Product> tableExistingProducts;
+  @FXML private ComboBox comboItemQuantity;
+  @FXML private ChoiceBox<ItemType> choiceItemType;
   @FXML private ListView<Product> listAllProducts;
+  @FXML private TableView<Product> tableExistingProducts;
   @FXML private TableColumn<?, ?> productNameColumn;
   @FXML private TableColumn<?, ?> productTypeColumn;
+  @FXML private Button btnCreateUser;
   @FXML private Button btnAddProduct;
   @FXML private Button btnRecordProduction;
 
@@ -58,9 +59,7 @@ public class Controller {
 
   /** Initializes any GUI fields or parameters when the GUI is launched. */
   public void initialize() {
-    initializeDBInfo();
-    Employee e = new Employee("First Last", "pass");
-    e.setUsername("First Last");
+    initializeDatabaseInfo();
     ObservableList<Integer> quantityOptions =
         FXCollections.observableArrayList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
     comboItemQuantity.setItems(quantityOptions);
@@ -80,20 +79,18 @@ public class Controller {
     setupProductListView();
   }
 
-  public void initializeDBInfo() {
+  private void initializeDatabaseInfo() {
     try {
       Properties prop = new Properties();
       prop.load(new FileInputStream("res/properties"));
       pass = prop.getProperty("password");
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
     } catch (IOException e) {
       e.printStackTrace();
     }
   }
 
   /** Method called in the initialize method that sets the placeholder text of the two ListViews. */
-  public void setupListViewPlaceholder() {
+  private void setupListViewPlaceholder() {
     tableExistingProducts.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     listAllProducts.setPlaceholder(new Label("No content"));
     tableExistingProducts.setPlaceholder(new Label("No content"));
@@ -293,6 +290,34 @@ public class Controller {
       e.printStackTrace();
     }
     showProduction();
+  }
+
+  /**
+   * Method called when the user clicks the 'Create Employee' button on the Employee tab. Displays
+   * an Alert with the Employee's information when created.
+   */
+  public void actionCreateUser() {
+    String fullName = txtFullName.getText();
+    String password = txtPassword.getText();
+    // Used to check if username contains only one space.
+    // Pattern p = Pattern.compile("^[a-zA-Z]+\\s[a-zA-Z]+");
+    // Matcher m = p.matcher(fullName);
+
+    if (!fullName.isEmpty()) {
+      if (txtPassword.getLength() >= 6) {
+        Employee emp = new Employee(fullName, password);
+        Alert a = new Alert(AlertType.INFORMATION);
+        a.setHeaderText("User creation");
+        a.setContentText(emp.toString());
+        a.show();
+        System.out.println(emp.toString());
+      }
+    } else {
+      Alert a = new Alert(AlertType.WARNING);
+      a.setHeaderText("Invalid information");
+      a.setContentText("You did not enter a name!");
+      a.show();
+    }
   }
 
   /**

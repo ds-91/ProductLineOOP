@@ -1,15 +1,15 @@
 package production;
 
-public class Employee {
+class Employee implements Comparable<Employee> {
 
-  private StringBuilder name;
+  private final StringBuilder name;
   private String username;
-  private String password;
+  private final String password;
   private String email;
 
   public Employee(String name, String password) {
     this.name = new StringBuilder().append(name);
-    if (name.contains(" ")) {
+    if (checkName(name)) {
       setUsername(name);
       setEmail(name);
     } else {
@@ -24,34 +24,53 @@ public class Employee {
     }
   }
 
-  public void setUsername(String name) {
+  private void setUsername(String name) {
     String[] split = name.split("\\s+");
-
     this.username = String.valueOf(name.charAt(0)).toLowerCase() + split[1].toLowerCase();
   }
 
-  public boolean checkName(String name) {
-
-    return false;
+  private boolean checkName(String name) {
+    return name.contains(" ");
   }
 
-  public void setEmail(String name)  {
+  private StringBuilder getName() {
+    return this.name;
+  }
+
+  private void setEmail(String name) {
     String[] split = name.split("\\s+");
     this.email = split[0].toLowerCase() + "." + split[1].toLowerCase() + "@oracleacademy.Test";
   }
 
-  public boolean isValidPassword(String password) {
-    if (password.matches("^(?=.{3,})(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+*!=]).*$")) {
-      return true;
-    }
-    return false;
+  private boolean isValidPassword(String password) {
+    return password.matches("^(?=.{3,})(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+*!=]).*$");
   }
 
   @Override
   public String toString() {
-    return "Employee Details\nName : " + this.name + "\n" +
-        "Username : " + this.username + "\n" +
-        "Email : " + this.email + "\n" +
-        "Initial Password : " + this.password;
+    return "Employee Details\nName : "
+        + this.name
+        + "\n"
+        + "Username : "
+        + this.username
+        + "\n"
+        + "Email : "
+        + this.email
+        + "\n"
+        + "Initial Password : "
+        + this.password;
+  }
+
+  @Override
+  public int compareTo(Employee emp) {
+    if (this.getName().toString().compareTo(emp.getName().toString()) == 0) {
+      return 0;
+    }
+    return 1;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return super.equals(obj);
   }
 }
