@@ -50,6 +50,9 @@ public class Controller {
   @FXML private TableView<Product> tableExistingProducts;
   @FXML private TableColumn<?, ?> productNameColumn;
   @FXML private TableColumn<?, ?> productTypeColumn;
+  @FXML private Button btnAddProduct;
+  @FXML private Button btnRecordProduction;
+  @FXML private Button btnCreateEmployee;
 
   private final ObservableList<Product> productLine = FXCollections.observableArrayList();
   private final ArrayList<ProductionRecord> productionLog = new ArrayList<>();
@@ -345,7 +348,7 @@ public class Controller {
       } else {
         Alert a = new Alert(AlertType.WARNING);
         a.setHeaderText("Invalid information");
-        a.setContentText("Full name should be in the format of Firstname Lastname!");
+        a.setContentText("Full name should be in the format of First name Last name!");
         a.show();
       }
     } else {

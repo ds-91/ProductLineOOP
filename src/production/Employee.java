@@ -1,5 +1,7 @@
 package production;
 
+import java.util.Objects;
+
 class Employee implements Comparable<Employee> {
 
   private final StringBuilder name;
@@ -67,6 +69,11 @@ class Employee implements Comparable<Employee> {
       return 0;
     }
     return 1;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(name, username, password, email);
   }
 
   @Override
