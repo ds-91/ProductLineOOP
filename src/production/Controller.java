@@ -7,6 +7,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Properties;
 import javafx.collections.FXCollections;
@@ -43,19 +44,22 @@ public class Controller {
   @FXML private TextField txtManufacturer;
   @FXML private TextField txtFullName;
   @FXML private TextField txtPassword;
-  @FXML private TextArea txtProductionLog;
   @FXML private ComboBox comboItemQuantity;
   @FXML private ChoiceBox<ItemType> choiceItemType;
   @FXML private ListView<Product> listAllProducts;
   @FXML private TableView<Product> tableExistingProducts;
   @FXML private TableColumn<?, ?> productNameColumn;
   @FXML private TableColumn<?, ?> productTypeColumn;
+  @FXML private TableView<ProductionRecord> tableProductionLog;
+  @FXML private TableColumn<ProductionRecord, Integer> recordProductionNumberColumn;
+  @FXML private TableColumn<ProductionRecord, String> recordSerialNumberColumn;
+  @FXML private TableColumn<ProductionRecord, Timestamp> recordDateProducedColumn;
   @FXML private Button btnAddProduct;
   @FXML private Button btnRecordProduction;
   @FXML private Button btnCreateEmployee;
 
   private final ObservableList<Product> productLine = FXCollections.observableArrayList();
-  private final ArrayList<ProductionRecord> productionLog = new ArrayList<>();
+  private final ObservableList<ProductionRecord> productionRecordLog = FXCollections.observableArrayList();
 
   /** Initializes any GUI fields or parameters when the GUI is launched. */
   public void initialize() {
@@ -73,10 +77,12 @@ public class Controller {
     choiceItemType.setItems(itemTypeList);
 
     setupProductLineTable();
+    setupProductionLineTable();
     loadProductList();
     loadProductionLog();
     setupListViewPlaceholder();
     setupProductListView();
+    System.out.println(productionRecordLog);
   }
 
   private void initializeDatabaseInfo() {
@@ -95,6 +101,7 @@ public class Controller {
     tableExistingProducts.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     listAllProducts.setPlaceholder(new Label("No content"));
     tableExistingProducts.setPlaceholder(new Label("No content"));
+    tableProductionLog.setPlaceholder(new Label("No content"));
   }
 
   /**
@@ -128,7 +135,6 @@ public class Controller {
 
           productLine.add(newProduct);
 
-          // Closes the prepared statement and connection (FindBugs)
           stmt.close();
           conn.close();
         } catch (ClassNotFoundException | SQLException e) {
@@ -185,7 +191,6 @@ public class Controller {
         addToProductionDB(productionRun);
 
         loadProductionLog();
-        showProduction();
       } else {
         Alert a = new Alert(AlertType.ERROR);
         a.setContentText("You must select an item to produce!");
@@ -214,9 +219,9 @@ public class Controller {
             conn.prepareStatement(
                 "INSERT INTO ProductionRecord(PRODUCT_ID, SERIAL_NUM, DATE_PRODUCED) "
                     + "VALUES(?, ?, ?)");
-        stmt.setInt(1, pr.getProductID());
-        stmt.setString(2, pr.getSerialNum());
-        stmt.setTimestamp(3, pr.getProdDate());
+        stmt.setInt(1, pr.getProductId());
+        stmt.setString(2, pr.getSerialNumber());
+        stmt.setTimestamp(3, pr.getDateProduced());
 
         stmt.execute();
 
@@ -238,6 +243,14 @@ public class Controller {
     productTypeColumn.setCellValueFactory(new PropertyValueFactory("type"));
 
     tableExistingProducts.setItems(productLine);
+  }
+
+  private void setupProductionLineTable() {
+    recordProductionNumberColumn.setCellValueFactory(new PropertyValueFactory("productionNumber"));
+    recordSerialNumberColumn.setCellValueFactory(new PropertyValueFactory("serialNumber"));
+    recordDateProducedColumn.setCellValueFactory(new PropertyValueFactory("dateProduced"));
+
+    tableProductionLog.setItems(productionRecordLog);
   }
 
   /**
@@ -287,24 +300,16 @@ public class Controller {
    * a new ProductionRecord object and adds it to the productionLog ArrayList.
    */
   private void loadProductionLog() {
-    /*
-     * Clear the productionLog ArrayList if it contains any elements. This is because this method is
-     * called more than once and results in the ArrayList having all elements duplicated.
-     */
-    if (productionLog.size() > 0) {
-      productionLog.clear();
-    }
+    productionRecordLog.clear();
     try {
       Class.forName(jdbcDriver);
-      // Blank username and password for now (FindBugs)
       Connection conn = DriverManager.getConnection(dbUrl, user, pass);
       PreparedStatement stmt = conn.prepareStatement("SELECT * FROM PRODUCTIONRECORD");
 
       ResultSet rs = stmt.executeQuery();
 
       while (rs.next()) {
-        productionLog.add(
-            new ProductionRecord(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getTimestamp(4)));
+        productionRecordLog.add(new ProductionRecord(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getTimestamp(4)));
       }
 
       // Closes the prepared statement and connection (FindBugs)
@@ -313,7 +318,7 @@ public class Controller {
     } catch (ClassNotFoundException | SQLException e) {
       e.printStackTrace();
     }
-    showProduction();
+    //showProduction();
   }
 
   /**
@@ -324,9 +329,6 @@ public class Controller {
   public void actionCreateEmployee() {
     String fullName = txtFullName.getText();
     String password = txtPassword.getText();
-    // Used to check if username contains only one space.
-    // Pattern p = Pattern.compile("^[a-zA-Z]+\\s[a-zA-Z]+");
-    // Matcher m = p.matcher(fullName);
 
     if (!fullName.isEmpty()) {
       if (fullName.matches("^[a-zA-Z]+\\s[a-zA-Z]+$")) {
@@ -356,28 +358,6 @@ public class Controller {
       a.setHeaderText("Invalid information");
       a.setContentText("You did not enter a name!");
       a.show();
-    }
-  }
-
-  /**
-   * Method called during initialization. This method looks through the productionLog ArrayList and
-   * appends the object fields into the production log TextArea. TextField cleared when the method
-   * is called as to not repeat entries.
-   */
-  private void showProduction() {
-    txtProductionLog.clear();
-    for (ProductionRecord pr : productionLog) {
-      String itemName = productLine.get(pr.getProductID()).getName();
-      txtProductionLog.appendText(
-          "Prod. Num: "
-              + pr.getProductionNum()
-              + " Product Name: "
-              + itemName
-              + " Serial Num: "
-              + pr.getSerialNum()
-              + " Date: "
-              + pr.getProdDate()
-              + "\n");
     }
   }
 }

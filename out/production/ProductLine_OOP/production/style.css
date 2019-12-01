@@ -196,3 +196,11 @@
   -fx-background-insets : 2.0, 0.0, 0.0;
   -fx-background-radius : 2.0em;
 }
+
+.table-view .column-header .arrow {
+  -fx-background-color: #589AFF;
+}
+
+.tab-pane:focused > .tab-header-area > .headers-region > .tab:selected .focus-indicator {
+  -fx-border-color: #589AFF;
+}
