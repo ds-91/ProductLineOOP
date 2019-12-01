@@ -36,7 +36,7 @@ public class Controller {
   private static final String jdbcDriver = "org.h2.Driver";
   private static final String dbUrl = "jdbc:h2:./res/ProductionDB";
 
-  private final String user = "";
+  private String user = "";
   private String pass = "";
 
   @FXML private TextField txtProductName;
@@ -50,9 +50,6 @@ public class Controller {
   @FXML private TableView<Product> tableExistingProducts;
   @FXML private TableColumn<?, ?> productNameColumn;
   @FXML private TableColumn<?, ?> productTypeColumn;
-  @FXML private Button btnCreateUser;
-  @FXML private Button btnAddProduct;
-  @FXML private Button btnRecordProduction;
 
   private final ObservableList<Product> productLine = FXCollections.observableArrayList();
   private final ArrayList<ProductionRecord> productionLog = new ArrayList<>();
@@ -84,6 +81,7 @@ public class Controller {
       Properties prop = new Properties();
       prop.load(new FileInputStream("res/properties"));
       pass = prop.getProperty("password");
+      user = prop.getProperty("user");
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -107,30 +105,35 @@ public class Controller {
    */
   public void actionAddButton(ActionEvent actionEvent) {
     if (txtProductName.getLength() > 0 && txtManufacturer.getLength() > 0) {
-      Widget newProduct =
-          new Widget(
-              choiceItemType.getSelectionModel().getSelectedItem().toString(),
-              txtManufacturer.getText(),
-              txtProductName.getText());
-      try {
-        Class.forName(jdbcDriver);
-        // Blank username and password for now (FindBugs)
-        Connection conn = DriverManager.getConnection(dbUrl, user, pass);
-        PreparedStatement stmt =
-            conn.prepareStatement("INSERT INTO Product(type, manufacturer, name) VALUES(?, ?, ?)");
-        stmt.setString(1, newProduct.getType());
-        stmt.setString(2, newProduct.getManufacturer());
-        stmt.setString(3, newProduct.getName());
+      if (!choiceItemType.getSelectionModel().isEmpty()) {
+        Widget newProduct =
+            new Widget(
+                choiceItemType.getSelectionModel().getSelectedItem().toString(),
+                txtManufacturer.getText(),
+                txtProductName.getText());
+        try {
+          Class.forName(jdbcDriver);
+          Connection conn = DriverManager.getConnection(dbUrl, user, pass);
+          PreparedStatement stmt =
+              conn.prepareStatement("INSERT INTO Product(type, manufacturer, name) VALUES(?, ?, ?)");
+          stmt.setString(1, newProduct.getType());
+          stmt.setString(2, newProduct.getManufacturer());
+          stmt.setString(3, newProduct.getName());
 
-        stmt.execute();
+          stmt.execute();
 
-        productLine.add(newProduct);
+          productLine.add(newProduct);
 
-        // Closes the prepared statement and connection (FindBugs)
-        stmt.close();
-        conn.close();
-      } catch (ClassNotFoundException | SQLException e) {
-        e.printStackTrace();
+          // Closes the prepared statement and connection (FindBugs)
+          stmt.close();
+          conn.close();
+        } catch (ClassNotFoundException | SQLException e) {
+          e.printStackTrace();
+        }
+      } else {
+        Alert a = new Alert(AlertType.ERROR);
+        a.setContentText("Item type must be selected!");
+        a.show();
       }
     } else {
       Alert alert = new Alert(AlertType.ERROR);
@@ -151,27 +154,43 @@ public class Controller {
      * Collects the data from the GUI ListView of all products able to be produced. Takes each line
      * and parses it to create a new ProductionRecord object and add it to the production log.
      */
-    String selectedItem = listAllProducts.getSelectionModel().getSelectedItem().toString();
-    int quantity =
-        Integer.parseInt(comboItemQuantity.getSelectionModel().getSelectedItem().toString());
-    String[] itemLines = selectedItem.split("\\r?\\n");
-
-    String selectedItemName = itemLines[0].substring(itemLines[0].indexOf(" ") + 1);
-    String selectedItemManufacturer = itemLines[1].substring(itemLines[1].indexOf(" ") + 1);
-    String selectedItemType = itemLines[2].substring(itemLines[2].indexOf(" ") + 1);
-
-    Product p = new Widget(selectedItemType, selectedItemManufacturer, selectedItemName);
-    p.setId(listAllProducts.getSelectionModel().getSelectedIndex());
-    ProductionRecord pr = new ProductionRecord(p, quantity);
-
-    ArrayList<ProductionRecord> productionRun = new ArrayList<>();
-    for (int i = 0; i < quantity; i++) {
-      productionRun.add(pr);
+    String selectedItem = null;
+    try {
+      selectedItem = listAllProducts.getSelectionModel().getSelectedItem().toString();
+    } catch (NullPointerException e) {
+      e.printStackTrace();
     }
-    addToProductionDB(productionRun);
+    if (comboItemQuantity.getSelectionModel().getSelectedItem().toString().matches("^[0-9]+$")) {
+      if (selectedItem != null) {
+        int quantity = Integer.parseInt(comboItemQuantity.getSelectionModel().getSelectedItem().toString());
+        String[] itemLines = selectedItem.split("\\r?\\n");
 
-    loadProductionLog();
-    showProduction();
+        String selectedItemName = itemLines[0].substring(itemLines[0].indexOf(" ") + 1);
+        String selectedItemManufacturer = itemLines[1].substring(itemLines[1].indexOf(" ") + 1);
+        String selectedItemType = itemLines[2].substring(itemLines[2].indexOf(" ") + 1);
+
+        Product p = new Widget(selectedItemType, selectedItemManufacturer, selectedItemName);
+        p.setId(listAllProducts.getSelectionModel().getSelectedIndex());
+        ProductionRecord pr = new ProductionRecord(p, quantity);
+
+        ArrayList<ProductionRecord> productionRun = new ArrayList<>();
+        for (int i = 0; i < quantity; i++) {
+          productionRun.add(pr);
+        }
+        addToProductionDB(productionRun);
+
+        loadProductionLog();
+        showProduction();
+      } else {
+        Alert a = new Alert(AlertType.ERROR);
+        a.setContentText("You must select an item to produce!");
+        a.show();
+      }
+    } else {
+      Alert a = new Alert(AlertType.ERROR);
+      a.setContentText("Item quantity is invalid!");
+      a.show();
+    }
   }
 
   /**
@@ -294,9 +313,10 @@ public class Controller {
 
   /**
    * Method called when the user clicks the 'Create Employee' button on the Employee tab. Displays
-   * an Alert with the Employee's information when created.
+   * an Alert with the Employee's information when created and an error alert if the user entered
+   * incorrect information.
    */
-  public void actionCreateUser() {
+  public void actionCreateEmployee() {
     String fullName = txtFullName.getText();
     String password = txtPassword.getText();
     // Used to check if username contains only one space.
@@ -304,13 +324,27 @@ public class Controller {
     // Matcher m = p.matcher(fullName);
 
     if (!fullName.isEmpty()) {
-      if (txtPassword.getLength() >= 6) {
-        Employee emp = new Employee(fullName, password);
-        Alert a = new Alert(AlertType.INFORMATION);
-        a.setHeaderText("User creation");
-        a.setContentText(emp.toString());
+      if (fullName.matches("^[a-zA-Z]+\\s[a-zA-Z]+$")) {
+        if (txtPassword.getLength() >= 6) {
+          Employee emp = new Employee(fullName, password);
+          Alert a = new Alert(AlertType.INFORMATION);
+          a.setHeaderText("Employee creation");
+          a.setContentText(emp.toString());
+          a.show();
+
+          txtFullName.clear();
+          txtPassword.clear();
+        } else {
+          Alert a = new Alert(AlertType.WARNING);
+          a.setHeaderText("Invalid information");
+          a.setContentText("Password must be 6 characters or more!");
+          a.show();
+        }
+      } else {
+        Alert a = new Alert(AlertType.WARNING);
+        a.setHeaderText("Invalid information");
+        a.setContentText("Full name should be in the format of Firstname Lastname!");
         a.show();
-        System.out.println(emp.toString());
       }
     } else {
       Alert a = new Alert(AlertType.WARNING);
