@@ -59,7 +59,8 @@ public class Controller {
   @FXML private Button btnCreateEmployee;
 
   private final ObservableList<Product> productLine = FXCollections.observableArrayList();
-  private final ObservableList<ProductionRecord> productionRecordLog = FXCollections.observableArrayList();
+  private final ObservableList<ProductionRecord> productionRecordLog =
+      FXCollections.observableArrayList();
 
   /** Initializes any GUI fields or parameters when the GUI is launched. */
   public void initialize() {
@@ -309,7 +310,8 @@ public class Controller {
       ResultSet rs = stmt.executeQuery();
 
       while (rs.next()) {
-        productionRecordLog.add(new ProductionRecord(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getTimestamp(4)));
+        productionRecordLog.add(
+            new ProductionRecord(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getTimestamp(4)));
       }
 
       // Closes the prepared statement and connection (FindBugs)
@@ -318,7 +320,7 @@ public class Controller {
     } catch (ClassNotFoundException | SQLException e) {
       e.printStackTrace();
     }
-    //showProduction();
+    // showProduction();
   }
 
   /**

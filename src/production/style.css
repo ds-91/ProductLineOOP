@@ -204,3 +204,11 @@
 .tab-pane:focused > .tab-header-area > .headers-region > .tab:selected .focus-indicator {
   -fx-border-color: #589AFF;
 }
+
+.list-view .scroll-bar .track {
+  -fx-background-color: #424242;
+}
+
+.table-view .scroll-bar .track {
+  -fx-background-color: #424242;
+}
