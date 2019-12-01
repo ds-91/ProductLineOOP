@@ -61,7 +61,7 @@ public class ProductionRecord {
    *
    * @return this production record's number.
    */
-  public int getProductionNum() {
+  public int getProductionNumber() {
     return productionNumber;
   }
 
@@ -70,7 +70,7 @@ public class ProductionRecord {
    *
    * @param productionNumber the production number.
    */
-  public void setProductionNum(int productionNumber) {
+  public void setProductionNumber(int productionNumber) {
     this.productionNumber = productionNumber;
   }
 
@@ -79,7 +79,7 @@ public class ProductionRecord {
    *
    * @return this production record's product id.
    */
-  public int getProductID() {
+  public int getProductId() {
     return productId;
   }
 
@@ -88,7 +88,7 @@ public class ProductionRecord {
    *
    * @param productId the product id.
    */
-  public void setProductID(int productId) {
+  public void setProductId(int productId) {
     this.productId = productId;
   }
 
@@ -97,7 +97,7 @@ public class ProductionRecord {
    *
    * @return this production record's serial number.
    */
-  public String getSerialNum() {
+  public String getSerialNumber() {
     return serialNumber;
   }
 
@@ -106,7 +106,7 @@ public class ProductionRecord {
    *
    * @param serialNumber the product's serial number.
    */
-  public void setSerialNum(String serialNumber) {
+  public void setSerialNumber(String serialNumber) {
     this.serialNumber = serialNumber;
   }
 
@@ -115,7 +115,7 @@ public class ProductionRecord {
    *
    * @return this production record's production date.
    */
-  public Timestamp getProdDate() {
+  public Timestamp getDateProduced() {
     return new Timestamp(this.dateProduced.getTime());
   }
 
@@ -124,7 +124,7 @@ public class ProductionRecord {
    *
    * @param dateProduced the production date.
    */
-  public void setProdDate(Timestamp dateProduced) {
+  public void setDateProduced(Timestamp dateProduced) {
     this.dateProduced = new Timestamp(dateProduced.getTime());
   }
 

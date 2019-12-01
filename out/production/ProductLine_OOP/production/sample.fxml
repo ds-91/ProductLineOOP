@@ -11,7 +11,6 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -73,7 +72,18 @@
     </Tab>
     <Tab text="Production Log">
       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-        <TextArea fx:id="txtProductionLog" layoutX="22.0" layoutY="18.0" prefHeight="271.0" prefWidth="455.0" />
+            <children>
+               <TableView fx:id="tableProductionLog" prefHeight="307.0" prefWidth="499.0">
+                  <columns>
+                     <TableColumn fx:id="recordProductionNumberColumn" prefWidth="123.0" text="Production ID" />
+                     <TableColumn fx:id="recordSerialNumberColumn" prefWidth="209.0" text="Serial Number" />
+                     <TableColumn fx:id="recordDateProducedColumn" prefWidth="166.0" text="Date Produced" />
+                  </columns>
+                  <columnResizePolicy>
+                     <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                  </columnResizePolicy>
+               </TableView>
+            </children>
       </AnchorPane>
     </Tab>
     <Tab text="Employee">
