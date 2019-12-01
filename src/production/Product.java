@@ -111,11 +111,11 @@ public abstract class Product implements Item {
     this.type = type;
   }
 
-  // Additional Challenges
-  public static <T> void printType(Collection<T> collection) {
-    for (T obj : collection) {
-      if (obj instanceof Product) {
-        System.out.println(((Product) obj).name + " is type: " + obj.getClass());
+  // Additional Challenge
+  public static <T> void printType(Collection<Product> collection, Class<T> type) {
+    for (Product p : collection) {
+      if (type.isInstance(p)) {
+        System.out.println(p.getName() + " is a type of " + type);
       }
     }
   }

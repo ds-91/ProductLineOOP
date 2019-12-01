@@ -115,7 +115,8 @@ public class Controller {
           Class.forName(jdbcDriver);
           Connection conn = DriverManager.getConnection(dbUrl, user, pass);
           PreparedStatement stmt =
-              conn.prepareStatement("INSERT INTO Product(type, manufacturer, name) VALUES(?, ?, ?)");
+              conn.prepareStatement(
+                  "INSERT INTO Product(type, manufacturer, name) VALUES(?, ?, ?)");
           stmt.setString(1, newProduct.getType());
           stmt.setString(2, newProduct.getManufacturer());
           stmt.setString(3, newProduct.getName());
@@ -162,7 +163,8 @@ public class Controller {
     }
     if (comboItemQuantity.getSelectionModel().getSelectedItem().toString().matches("^[0-9]+$")) {
       if (selectedItem != null) {
-        int quantity = Integer.parseInt(comboItemQuantity.getSelectionModel().getSelectedItem().toString());
+        int quantity =
+            Integer.parseInt(comboItemQuantity.getSelectionModel().getSelectedItem().toString());
         String[] itemLines = selectedItem.split("\\r?\\n");
 
         String selectedItemName = itemLines[0].substring(itemLines[0].indexOf(" ") + 1);
