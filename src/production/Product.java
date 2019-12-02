@@ -111,7 +111,13 @@ public abstract class Product implements Item {
     this.type = type;
   }
 
-  // Additional Challenge
+  /**
+   * Method that prints the Product if it is an instance of the parameter type.
+   *
+   * @param collection Collection of products to iterate over.
+   * @param type Type of class to check for.
+   * @param <T> Generic type when accepting a Class.
+   */
   public static <T> void printType(Collection<Product> collection, Class<T> type) {
     for (Product p : collection) {
       if (type.isInstance(p)) {

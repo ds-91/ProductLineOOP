@@ -54,19 +54,19 @@
   -fx-text-fill: #d3d3d3;
 }
 
-.list-cell:empty:odd {
+.list-cell:empty:even {
   -fx-background-color: #4c4c4c;
 }
 
-.list-cell:empty:even {
+.list-cell:empty:odd {
   -fx-background-color: #424242;
 }
 
-.list-cell:odd {
+.list-cell:even {
   -fx-background-color: #4c4c4c;
 }
 
-.list-cell:even {
+.list-cell:odd {
   -fx-background-color: #424242;
 }
 
@@ -100,11 +100,11 @@
   -fx-alignment: CENTER;
 }
 
-.table-view .cell:even {
+.table-view .cell:odd {
   -fx-background-color: #424242;
 }
 
-.table-view .cell:odd {
+.table-view .cell:even {
   -fx-background-color: #4c4c4c;
 }
 

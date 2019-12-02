@@ -23,7 +23,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 
@@ -83,7 +82,6 @@ public class Controller {
     loadProductionLog();
     setupListViewPlaceholder();
     setupProductListView();
-    System.out.println(productionRecordLog);
   }
 
   private void initializeDatabaseInfo() {
@@ -100,6 +98,7 @@ public class Controller {
   /** Method called in the initialize method that sets the placeholder text of the two ListViews. */
   private void setupListViewPlaceholder() {
     tableExistingProducts.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+    tableProductionLog.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     listAllProducts.setPlaceholder(new Label("No content"));
     tableExistingProducts.setPlaceholder(new Label("No content"));
     tableProductionLog.setPlaceholder(new Label("No content"));
@@ -115,7 +114,7 @@ public class Controller {
    * @param actionEvent The action of when the button is clicked.
    */
   public void actionAddButton(ActionEvent actionEvent) {
-    if (txtProductName.getLength() > 0 && txtManufacturer.getLength() > 0) {
+    if (txtProductName.getLength() >= 3 && txtManufacturer.getLength() >= 3) {
       if (!choiceItemType.getSelectionModel().isEmpty()) {
         Widget newProduct =
             new Widget(
@@ -214,7 +213,6 @@ public class Controller {
     for (ProductionRecord pr : productionRun) {
       try {
         Class.forName(jdbcDriver);
-        // Blank username and password for now (FindBugs)
         Connection conn = DriverManager.getConnection(dbUrl, user, pass);
         PreparedStatement stmt =
             conn.prepareStatement(
@@ -226,7 +224,6 @@ public class Controller {
 
         stmt.execute();
 
-        // Closes the prepared statement and connection (FindBugs)
         stmt.close();
         conn.close();
       } catch (ClassNotFoundException | SQLException e) {
@@ -270,7 +267,6 @@ public class Controller {
     productLine.clear();
     try {
       Class.forName(jdbcDriver);
-      // Blank username and password for now (FindBugs)
       Connection conn = DriverManager.getConnection(dbUrl, user, pass);
       PreparedStatement stmt = conn.prepareStatement("SELECT * FROM PRODUCT");
 
@@ -287,7 +283,6 @@ public class Controller {
         productLine.add(databaseProduct);
       }
 
-      // Closes the prepared statement and connection (FindBugs)
       stmt.close();
       conn.close();
 
@@ -298,7 +293,7 @@ public class Controller {
 
   /**
    * Method called during initialization. This method queries the ProductionRecord table and creates
-   * a new ProductionRecord object and adds it to the productionLog ArrayList.
+   * a new ProductionRecord object and adds it to the productionLog ObservableList.
    */
   private void loadProductionLog() {
     productionRecordLog.clear();
@@ -314,13 +309,11 @@ public class Controller {
             new ProductionRecord(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getTimestamp(4)));
       }
 
-      // Closes the prepared statement and connection (FindBugs)
       stmt.close();
       conn.close();
     } catch (ClassNotFoundException | SQLException e) {
       e.printStackTrace();
     }
-    // showProduction();
   }
 
   /**
