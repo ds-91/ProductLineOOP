@@ -84,6 +84,7 @@ public class Controller {
     setupProductListView();
   }
 
+  /** Called during initialization. Loads database credentials from properties file. */
   private void initializeDatabaseInfo() {
     try {
       Properties prop = new Properties();
@@ -95,9 +96,16 @@ public class Controller {
     }
   }
 
+  /**
+   * Reverses the database password from the properties file and returns it.
+   *
+   * @param pw The database password from the properties file that needs to be reversed.
+   * @return A reversed string.
+   */
   private String reverseDatabasePassword(String pw) {
-    if (pw.length() <= 1) return pw;
-
+    if (pw.length() <= 1) {
+      return pw;
+    }
     return pw.charAt(pw.length() - 1) + reverseDatabasePassword(pw.substring(0, pw.length() - 1));
   }
 
@@ -166,10 +174,6 @@ public class Controller {
    * @param actionEvent The action of when the button is clicked.
    */
   public void actionRecordProduction(ActionEvent actionEvent) {
-    /*
-     * Collects the data from the GUI ListView of all products able to be produced. Takes each line
-     * and parses it to create a new ProductionRecord object and add it to the production log.
-     */
     String selectedItem = null;
     try {
       selectedItem = listAllProducts.getSelectionModel().getSelectedItem().toString();
@@ -249,6 +253,10 @@ public class Controller {
     tableExistingProducts.setItems(productLine);
   }
 
+  /**
+   * Called during initialization. Registers {@link ProductionRecord} object properties to TableView
+   * columns and adds all items from the list to the table.
+   */
   private void setupProductionLineTable() {
     recordProductionNumberColumn.setCellValueFactory(new PropertyValueFactory("productionNumber"));
     recordSerialNumberColumn.setCellValueFactory(new PropertyValueFactory("serialNumber"));
