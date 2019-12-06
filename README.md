@@ -5,15 +5,15 @@ it from September to December of 2019. Although it was for an assignment, I had 
 definitely learned a lot about OOP fundamentals. Project for FGCU's Object Oriented Programming class.
 
 ### Demonstration
-
+![Add Product](res/demo_gifs/add_product.gif)
+![Record Production](res/demo_gifs/record_production.gif)
+![Create Employee](res/demo_gifs/employee.gif)
 
 ### Documentation
-
+[JavaDocs](https://github.com/ds-91/ProductLineOOP/docs/index.html) 
 
 ### Diagrams
-![Database Diagram](https://i.imgur.com/qHRqOxk.png)
-
-![Class Diagram](https://i.imgur.com/0zZrdEX.png)
+![Class Diagram](res/class_diagram.png)
 
 ### Getting Started
 To get started, clone the repository and run the program from main.
