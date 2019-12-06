@@ -14,6 +14,7 @@ definitely learned a lot about OOP fundamentals. Project for FGCU's Object Orien
 
 ### Diagrams
 ![Class Diagram](res/class_diagram.png)
+![Database Diagram](res/db_diagram.png)
 
 ### Getting Started
 To get started, clone the repository and run the program from main.
