@@ -88,11 +88,17 @@ public class Controller {
     try {
       Properties prop = new Properties();
       prop.load(new FileInputStream("res/properties"));
-      pass = prop.getProperty("password");
+      pass = reverseDatabasePassword(prop.getProperty("password"));
       user = prop.getProperty("user");
     } catch (IOException e) {
       e.printStackTrace();
     }
+  }
+
+  private String reverseDatabasePassword(String pw) {
+    if (pw.length() <= 1) return pw;
+
+    return pw.charAt(pw.length() - 1) + reverseDatabasePassword(pw.substring(0, pw.length() - 1));
   }
 
   /** Method called in the initialize method that sets the placeholder text of the two ListViews. */
