@@ -17,7 +17,7 @@ definitely learned a lot about OOP fundamentals. Project for FGCU's Object Orien
 ![Database Diagram](res/db_diagram.png)
 
 ### Getting Started
-To get started, clone the repository and run the program from main.
+To get started, clone the repository, import into IntelliJ, and run the program from main.
 
 ### Built With
 Java 8, JavaFX, H2, and IntelliJ
@@ -36,3 +36,4 @@ Licensed under [GNU GPLv3](https://choosealicense.com/licenses/gpl-3.0/)
 ### Acknowledgements
 - [Stackoverflow](https://stackoverflow.com/)
 - [Reddit](https://reddit.com/)
+- [Course Website](https://sites.google.com/site/profvanselow/course/cop-3003)
