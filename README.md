@@ -10,7 +10,7 @@ definitely learned a lot about OOP fundamentals. Project for FGCU's Object Orien
 ![Create Employee](res/demo_gifs/employee.gif)
 
 ### Documentation
-[JavaDocs](https://ds-91.github.io/ProductLineOOP/)
+[JavaDocs](https://ds-91.github.io/ProductLineOOP/index.html)
 
 ### Diagrams
 ![Class Diagram](res/class_diagram.png)
