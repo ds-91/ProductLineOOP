@@ -192,10 +192,10 @@ public class Controller {
 
         Product p = new Widget(selectedItemType, selectedItemManufacturer, selectedItemName);
         p.setId(listAllProducts.getSelectionModel().getSelectedIndex());
-        ProductionRecord pr = new ProductionRecord(p, quantity);
 
         ArrayList<ProductionRecord> productionRun = new ArrayList<>();
-        for (int i = 0; i < quantity; i++) {
+        for (int i = 1; i <= quantity; i++) {
+          ProductionRecord pr = new ProductionRecord(p, i);
           productionRun.add(pr);
         }
         addToProductionDB(productionRun);
