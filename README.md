@@ -13,7 +13,8 @@ definitely learned a lot about OOP fundamentals. Project for FGCU's Object Orien
 [JavaDocs](https://ds-91.github.io/ProductLineOOP/index.html)
 
 ### Diagrams
-![Class Diagram](res/class_diagram.png)
+![Class Diagram](res/controller.png)
+![Class Diagram2](res/others.png)
 ![Database Diagram](res/db_diagram.png)
 
 ### Getting Started
