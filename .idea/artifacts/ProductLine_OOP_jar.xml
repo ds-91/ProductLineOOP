@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="ProductLine_OOP:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/ProductLine_OOP_jar</output-path>
+    <root id="archive" name="ProductLine_OOP.jar">
+      <element id="module-output" name="ProductLine_OOP" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../h2/bin/h2-1.4.199.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
